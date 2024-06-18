@@ -1,0 +1,13 @@
+C:\Users\huana\source\repos\PRUEBA2\PRUEBA2\bin\Debug\PRUEBA2.exe.config
+C:\Users\huana\source\repos\PRUEBA2\PRUEBA2\bin\Debug\PRUEBA2.exe
+C:\Users\huana\source\repos\PRUEBA2\PRUEBA2\bin\Debug\PRUEBA2.pdb
+C:\Users\huana\source\repos\PRUEBA2\PRUEBA2\bin\Debug\ClassLibrary1.dll
+C:\Users\huana\source\repos\PRUEBA2\PRUEBA2\bin\Debug\ClassLibrary1.pdb
+C:\Users\huana\source\repos\PRUEBA2\PRUEBA2\obj\Debug\PRUEBA2.csproj.AssemblyReference.cache
+C:\Users\huana\source\repos\PRUEBA2\PRUEBA2\obj\Debug\PRUEBA2.Form1.resources
+C:\Users\huana\source\repos\PRUEBA2\PRUEBA2\obj\Debug\PRUEBA2.Properties.Resources.resources
+C:\Users\huana\source\repos\PRUEBA2\PRUEBA2\obj\Debug\PRUEBA2.csproj.GenerateResource.cache
+C:\Users\huana\source\repos\PRUEBA2\PRUEBA2\obj\Debug\PRUEBA2.csproj.CoreCompileInputs.cache
+C:\Users\huana\source\repos\PRUEBA2\PRUEBA2\obj\Debug\PRUEBA2.csproj.CopyComplete
+C:\Users\huana\source\repos\PRUEBA2\PRUEBA2\obj\Debug\PRUEBA2.exe
+C:\Users\huana\source\repos\PRUEBA2\PRUEBA2\obj\Debug\PRUEBA2.pdb
