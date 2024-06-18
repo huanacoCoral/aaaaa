@@ -1,0 +1,143 @@
+#5_1
+import numpy as np
+import scipy.sparse as sp
+from multiprocessing import Pool, cpu_count
+
+# Generar matrices dispersas aleatorias grandes
+def generate_sparse_matrix(n_rows, n_cols, density=0.01):
+    return sp.random(n_rows, n_cols, density=density, format='csr')
+
+# Multiplicar submatrices
+def multiply_submatrices(args):
+    A, B, row_range = args
+    return A[row_range].dot(B)
+
+# Multiplicar matrices dispersas usando multiprocesamiento
+def parallel_sparse_matrix_multiply(A, B, n_processes=None):
+    n_processes = n_processes or cpu_count()
+    n_rows = A.shape[0]
+
+    # Dividir las filas de A para los subprocesos
+    chunk_size = int(np.ceil(n_rows / n_processes))
+    row_chunks = [(i * chunk_size, min((i + 1) * chunk_size, n_rows)) for i in range(n_processes)]
+
+    # Preparar los argumentos para los subprocesos
+    args = [(A, B, slice(*rows)) for rows in row_chunks]
+
+    # Usar un pool de procesos para realizar la multiplicación
+    with Pool(processes=n_processes) as pool:
+        result_chunks = pool.map(multiply_submatrices, args)
+
+    # Combinar los resultados
+    return sp.vstack(result_chunks)
+
+if __name__ == "__main__":
+    n_rows, n_cols = 1200, 1200
+    density = 0.01
+
+    # Generar dos matrices dispersas grandes
+    A = generate_sparse_matrix(n_rows, n_cols, density)
+    B = generate_sparse_matrix(n_cols, n_rows, density)
+
+    # Multiplicar las matrices usando paralelización
+    C = parallel_sparse_matrix_multiply(A, B)
+
+    print("Multiplicación de matrices dispersas completada.")
+    print("Dimensiones de la matriz resultante:", C.shape)
+
+
+
+
+
+
+
+
+--5_2
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <omp.h>
+#include <time.h>
+
+#define N 1000  // Tamaño de la matriz
+
+// Estructura para matriz dispersa
+typedef struct {
+    int *row;
+    int *col;
+    double *data;
+    int nnz;  // Número de elementos no cero
+} SparseMatrix;
+
+// Función para multiplicar matrices dispersas en paralelo
+void sparse_matrix_multiply(SparseMatrix *A, SparseMatrix *B, SparseMatrix *C) {
+    #pragma omp parallel for
+    for (int i = 0; i < A->nnz; i++) {
+        for (int j = 0; j < B->nnz; j++) {
+            if (A->col[i] == B->row[j]) {
+                int row = A->row[i];
+                int col = B->col[j];
+                double value = A->data[i] * B->data[j];
+                
+                #pragma omp critical
+                {
+                    C->row[C->nnz] = row;
+                    C->col[C->nnz] = col;
+                    C->data[C->nnz] = value;
+                    C->nnz++;
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    srand(time(NULL));
+
+    // Crear matrices dispersas aleatorias
+    SparseMatrix A, B, C;
+    A.nnz = B.nnz = 1000;  // Número de elementos no cero
+    C.nnz = 0;
+    A.row = (int *)malloc(A.nnz * sizeof(int));
+    A.col = (int *)malloc(A.nnz * sizeof(int));
+    A.data = (double *)malloc(A.nnz * sizeof(double));
+    B.row = (int *)malloc(B.nnz * sizeof(int));
+    B.col = (int *)malloc(B.nnz * sizeof(int));
+    B.data = (double *)malloc(B.nnz * sizeof(double));
+    C.row = (int *)malloc(A.nnz * B.nnz * sizeof(int));
+    C.col = (int *)malloc(A.nnz * B.nnz * sizeof(int));
+    C.data = (double *)malloc(A.nnz * B.nnz * sizeof(double));
+
+    // Inicializar matrices dispersas aleatoriamente
+    for (int i = 0; i < A.nnz; i++) {
+        A.row[i] = rand() % N;
+        A.col[i] = rand() % N;
+        A.data[i] = (double)(rand() % 100) / 100;
+    }
+    for (int i = 0; i < B.nnz; i++) {
+        B.row[i] = rand() % N;
+        B.col[i] = rand() % N;
+        B.data[i] = (double)(rand() % 100) / 100;
+    }
+
+
+    sparse_matrix_multiply(&A, &B, &C);
+
+   
+    printf("Resultado de la multiplicación de matrices dispersas:\n");
+    for (int i = 0; i < C.nnz; i++) {
+        printf("C[%d, %d] = %f\n", C.row[i], C.col[i], C.data[i]);
+    }
+
+    free(A.row);
+    free(A.col);
+    free(A.data);
+    free(B.row);
+    free(B.col);
+    free(B.data);
+    free(C.row);
+    free(C.col);
+    free(C.data);
+
+    return 0;
+}
